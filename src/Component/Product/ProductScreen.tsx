@@ -14,31 +14,24 @@ const ProductScreen = (props: any) => {
         { value: "B", label: "Tầm trung" },
         { value: "C", label: "Cao cấp" }];
     const navigate = useNavigate();
-    const [products, setProducts] = useState([
-        {
-            "product_name":"Laptop A",
-            "price": 20000
-        },
-        {
-            "product_name":"Laptop B",
-            "price": 500000
-        }
-    ] as any);
+    const [products, setProducts] = useState([] as any);
     const [filter, setFilter] = useState('');
+    const [demand, setDemand] = useState('');
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         if (loading) {
-            Axios.get('phone/getListPhone')
+            Axios.get('laptop')
                 .then((res) => {
                     const listProduct = res.data;
                     setProducts(
                         listProduct.map((p: any) => {
                             return {
-                                id: p.id,
-                                img: p.image,
-                                product_name: p.name,
+                                laptopId: p.laptopId,
+                                image: p.image,
+                                laptopName: p.laptopName,
                                 price: p.price,
-                                label: p.label
+                                labelName: p.label.labelName,
+                                rating: p.rating
                             };
                         })
                     );
@@ -76,6 +69,35 @@ const ProductScreen = (props: any) => {
         }
 
     }
+    const handleClickFind = () => {
+        if (demand === "") {
+            setLoading(true);
+        } else {
+            console.log(demand)
+            Axios.get(`laptop`, {
+                params: {
+                    demand: demand
+                }
+            }).then(res => {
+                const listProduct = res.data;
+                setProducts(
+                    listProduct.map((p: any) => {
+                        return {
+                            laptopId: p.laptopId,
+                            image: p.image,
+                            laptopName: p.laptopName,
+                            price: p.price,
+                            labelName: p.label.labelName,
+                            rating: p.rating
+                        };
+                    })
+                );
+            }).catch(e => {
+                console.log(e);
+            })
+        }
+
+    }
     const handleClickReset = () => {
         setLoading(true);
         setFilter("");
@@ -93,11 +115,13 @@ const ProductScreen = (props: any) => {
                             <OutlinedInput
                             id="component-outlined"
                             color='error'
-                            label="Name"
+                            label="Demand"
+                            name='demand'
+                            onChange={(e)=>setDemand(e.target.value)}
                             />
                         </FormControl>
                         <FormControl sx={{ m: 1, width: 50 }}>
-                            <Button onClick={handleClickFilter} variant='outlined' color='error' sx={{ height: '55px' }}>Find</Button>
+                            <Button onClick={handleClickFind} variant='outlined' color='error' sx={{ height: '55px' }}>Find</Button>
                         </FormControl>
                         {/* <FormControl sx={{ m: 1, width: 250, marginLeft: 10 }}>
                             <InputLabel id="demo-select-small">Filter</InputLabel>

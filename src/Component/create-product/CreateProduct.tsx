@@ -26,27 +26,25 @@ const CreateProduct = () => {
         name: '',
         ram: '',
         cpu: '',
-        resolution1: '',
-        resolution2: '',
+        gpu: '',
+        weight:'',
+        hardDrive: '',
         price: '',
         brand: '',
         image: '',
-        widescreen: '',
-        rom: '',
-        dataTrain: ''
+        wideScreen: ''
     }
     const initialError = {
         name: false,
         ram: false,
         cpu: false,
-        resolution1: false,
-        resolution2: false,
+        gpu: false,
+        weight: false,
+        hardDrive: false,
         price: false,
         image: false,
         brand: false,
-        widescreen: false,
-        rom: false,
-        dataTrain: false
+        wideScreen: false
     }
     const option = [{
         value: "DataBigNum", label: 'Data(Big num)'
@@ -58,36 +56,9 @@ const CreateProduct = () => {
     const navigate = useNavigate();
     const [error, setError] = useState(initialError);
     const [product, setProduct] = useState<any>('')
-    const [lstCpu, setLstCpu] = useState([
-        {
-          id: 1,
-          cpu_name: 'Intel Core i5-1235u'  
-        },
-        {
-            id: 2,
-            cpu_name: 'Apple M2'  
-        }
-    ] as any);
-    const [lstGpu, setLstGpu] = useState([
-        {
-          id: 1,
-          gpu_name: 'RTX 4080'  
-        },
-        {
-            id: 2,
-            gpu_name: 'MX550'  
-        }
-    ] as any);
-    const [brands, setBrands] = useState([
-        {
-          id: 1,
-          brand_name: 'Macbook'  
-        },
-        {
-            id: 2,
-            brand_name: 'Samsung'  
-        }
-    ] as any)
+    const [lstCpu, setLstCpu] = useState([] as any);
+    const [lstGpu, setLstGpu] = useState([] as any);
+    const [brands, setBrands] = useState([] as any)
     const [messageError, setMessageError] = useState(initialMessageError);
     const [img, setImg] = useState<any | null>('');
     const [submit, setSubmit] = useState(false);
@@ -111,7 +82,7 @@ const CreateProduct = () => {
         let flag = false;
         let errorMessage = {} as any;
         let error1 = initialError;
-        if (product.name === null || product.name === undefined || product.name === '') {
+        if (product.laptopName === null || product.laptopName === undefined || product.laptopName === '') {
             errorMessage.name = 'Name is require';
             error1.name = true;
             flag = true;
@@ -119,16 +90,23 @@ const CreateProduct = () => {
             error1.name = false;
         }
 
-        if (product?.brand === undefined || product?.brand === null) {
+        if (product?.brandId === undefined || product?.brandId === null) {
             errorMessage.brand = 'Brand is require';
             error1.brand = true;
             flag = true;
         } else {
             error1.brand = false;
         }
-        if (product?.cpu === undefined || product?.cpu === null) {
+        if (product?.cpuId === undefined || product?.cpuId === null) {
             errorMessage.cpu = 'CPU is require';
             error1.cpu = true;
+            flag = true;
+        } else {
+            error1.cpu = false;
+        }
+        if (product?.gpuId === undefined || product?.gpuId === null) {
+            errorMessage.gpu = 'GPU is require';
+            error1.gpu = true;
             flag = true;
         } else {
             error1.cpu = false;
@@ -150,58 +128,46 @@ const CreateProduct = () => {
         else {
             error1.ram = false;
         }
-
-        if (product.rom === undefined || product.rom === null || product.rom === '') {
-            errorMessage.rom = 'Rom is require';
-            error1.rom = true;
+        if (product.hardDrive === undefined || product.hardDrive === null || product.hardDrive === '') {
+            errorMessage.hardDrive = 'Hard drive is require';
+            error1.hardDrive = true;
             flag = true;
-        } else if (product.rom > 1024) {
-            errorMessage.rom = 'Rom less than 1024';
-            error1.rom = true;
+        } else if (product.hardDrive > 1024) {
+            errorMessage.hardDrive = 'Hard drive less than 1024';
+            error1.hardDrive = true;
             flag = true;
-        } else if (product.rom <= 0) {
-            errorMessage.rom = 'Rom bigger than 0';
-            error1.rom = true;
-            flag = true;
-        } else {
-            error1.rom = false;
-        }
-
-        if (product.widescreen === undefined || product.widescreen === null || product.widescreen === '') {
-            errorMessage.widescreen = 'Widescreen is require';
-            error1.widescreen = true;
-            flag = true;
-        } else if (product.widescreen <= 0) {
-            errorMessage.widescreen = 'Widescreen bigger 0';
-            error1.widescreen = true;
+        } else if (product.hardDrive <= 0) {
+            errorMessage.hardDrive = 'Hard drive bigger than 0';
+            error1.hardDrive = true;
             flag = true;
         } else {
-            error1.widescreen = false;
+            error1.hardDrive = false;
         }
 
-        if (product.resolution1 === undefined || product.resolution1 === null || product.resolution1 === '') {
-            errorMessage.resolution1 = 'Resolution1 is require';
-            error1.resolution1 = true;
+        if (product.wideScreen === undefined || product.wideScreen === null || product.wideScreen === '') {
+            errorMessage.wideScreen = 'Widescreen is require';
+            error1.wideScreen = true;
             flag = true;
-        } else if (product.resolution1 <= 0) {
-            errorMessage.resolution1 = 'Resolution1 bigger 0';
-            error1.resolution1 = true;
+        } else if (product.wideScreen <= 0) {
+            errorMessage.wideScreen = 'Widescreen bigger 0';
+            error1.wideScreen = true;
             flag = true;
         } else {
-            error1.resolution1 = false;
+            error1.wideScreen = false;
         }
-        if (product.resolution2 === undefined || product.resolution2 === null || product.resolution2 === '') {
-            errorMessage.resolution2 = 'Resolution2 is require';
-            error1.resolution2 = true;
+        if (product.weight === undefined || product.weight === null || product.weight === '') {
+            errorMessage.weight = 'Weight is require';
+            error1.weight = true;
             flag = true;
-        } else if (product.resolution2 <= 0) {
-            errorMessage.resolution2 = 'Resolution2 bigger 0';
-            error1.resolution2 = true;
+        } else if (product.weight <= 0) {
+            errorMessage.weight = 'Weight bigger 0';
+            error1.weight = true;
             flag = true;
         } else {
-            error1.resolution2 = false;
+            error1.weight = false;
         }
 
+        
         if (product.price === undefined || product.price === 0 || product.price === null || product.price === '') {
             errorMessage.price = 'Price is require';
             error1.price = true;
@@ -214,27 +180,21 @@ const CreateProduct = () => {
             error1.price = false;
         }
 
-        if (product.image === undefined || product.image === null || product.image === '') {
-            errorMessage.image = 'Image is require';
-            error1.image = true;
-            flag = true;
-        } else {
-            error1.image = false;
-        }
+        // if (product.image === undefined || product.image === null || product.image === '') {
+        //     errorMessage.image = 'Image is require';
+        //     error1.image = true;
+        //     flag = true;
+        // } else {
+        //     error1.image = false;
+        // }
 
-        if (dataTrain === undefined || dataTrain === null || dataTrain === '') {
-            errorMessage.dataTrain = 'Please choose data train';
-            error1.dataTrain = true;
-            flag = true;
-        } else {
-            error1.dataTrain = false;
-        }
         setMessageError(errorMessage);
         setError(error1);
         return flag;
     }
     const postCreateProduct = () => {
-        Axios.post("phone/save", product)
+        console.log(product)
+        Axios.post("laptop", product)
             .then((res) => {
                 alert(res.data);
                 navigate(-1);
@@ -256,7 +216,7 @@ const CreateProduct = () => {
     }
 
     useEffect(() => {
-        Axios.get(`phone/getListCPU`)
+        Axios.get(`cpu`)
             .then(res => {
                 setLstCpu(res.data);
                 console.log(res.data);
@@ -267,9 +227,17 @@ const CreateProduct = () => {
             })
     }, [])
     useEffect(() => {
-        Axios.get(`phone/getListBrand`)
+        Axios.get(`brand`)
             .then(res => {
                 setBrands(res.data);
+            }).catch((error) => {
+                console.log(error);
+            })
+    }, [])
+    useEffect(() => {
+        Axios.get(`gpu`)
+            .then(res => {
+                setLstGpu(res.data);
             }).catch((error) => {
                 console.log(error);
             })
@@ -309,7 +277,7 @@ const CreateProduct = () => {
     const handleChange = (e: any) => {
         const name = e.target.name;
         const value = e.target.value;
-        if (name === 'name') {
+        if (name === 'laptopName') {
             setProduct({ ...product, [name]: value });
         } else {
             if (!isNaN(value)) {
@@ -332,9 +300,9 @@ const CreateProduct = () => {
                             <TextField sx={{ width: '100%' }}
                                 onChange={handleChange}
                                 error={error.name}
-                                value={`${product.name ? product.name : ''}`}
+                                value={`${product.laptopName ? product.laptopName : ''}`}
                                 label={'Name *'}
-                                name="name"  color="error"/>
+                                name="laptopName"  color="error"/>
                             {
                                 error.name && <FormControl error variant="standard">
                                     <FormHelperText id="component-error-text">{messageError.name}</FormHelperText>
@@ -349,9 +317,9 @@ const CreateProduct = () => {
                                 id="brand"
                                 options={brands}
                                 //value={filterBrand()}
-                                getOptionLabel={(option) => option.brand_name}
+                                getOptionLabel={(option) => option.brandName}
                                 onChange={(event: any, newInputValue: any) => {
-                                    setProduct({ ...product, brand: newInputValue });
+                                    setProduct({ ...product, brandId: newInputValue.brandId+'' });
                                 }}
                                 sx={{ width: '100%' }}
                                 renderInput={(params) => <TextField
@@ -369,9 +337,9 @@ const CreateProduct = () => {
                                 id="cpu"
                                 options={lstCpu}
                                 //value={filterCpu()}
-                                getOptionLabel={(option) => option.cpu_name}
+                                getOptionLabel={(option) => option.cpuName}
                                 onChange={(event: any, newInputValue: any) => {
-                                    setProduct({ ...product, cpu: newInputValue });
+                                    setProduct({ ...product, cpuId: newInputValue.cpuId+'' });
                                 }}
                                 sx={{ width: '100%' }}
                                 renderInput={(params) => <TextField
@@ -389,9 +357,9 @@ const CreateProduct = () => {
                                 id="gpu"
                                 options={lstGpu}
                                 //value={filterGpu()}
-                                getOptionLabel={(option) => option.gpu_name}
+                                getOptionLabel={(option) => option.gpuName}
                                 onChange={(event: any, newInputValue: any) => {
-                                    setProduct({ ...product, gpu: newInputValue });
+                                    setProduct({ ...product, gpuId: newInputValue.gpuId+'' });
                                 }}
                                 sx={{ width: '100%' }}
                                 renderInput={(params) => <TextField
@@ -439,10 +407,10 @@ const CreateProduct = () => {
                                             onChange={handleChange}
                                             label={'Ram (GB) *'}
                                             type={'text'}
-                                            error={error.resolution1} color="error"
+                                            error={error.ram} color="error"
                                         />
-                                        {error.resolution1 && <FormControl error variant="standard">
-                                            <FormHelperText id="component-error-text">{messageError.resolution1}</FormHelperText>
+                                        {error.ram && <FormControl error variant="standard">
+                                            <FormHelperText id="component-error-text">{messageError.ram}</FormHelperText>
                                         </FormControl>}
                                     </td>
                                     <td style={{ textAlign: 'right', width: "50%" }}>
@@ -452,10 +420,10 @@ const CreateProduct = () => {
                                             onChange={handleChange}
                                             label={'Hard drive (GB) *'}
                                             type={'text'}
-                                            error={error.resolution2} color="error"
+                                            error={error.hardDrive} color="error"
                                         />
-                                        {error.resolution2 && <FormControl error variant="standard">
-                                            <FormHelperText id="component-error-text">{messageError.resolution2}</FormHelperText>
+                                        {error.hardDrive && <FormControl error variant="standard">
+                                            <FormHelperText id="component-error-text">{messageError.hardDrive}</FormHelperText>
                                         </FormControl>}
                                     </td>
                                 </tr>
@@ -463,15 +431,15 @@ const CreateProduct = () => {
                         </div>
                         <div className="container-input">
                             <TextField
-                                name="widescreen"
-                                value={`${product.widescreen ? product.widescreen : ''}`}
+                                name="wideScreen"
+                                value={`${product.wideScreen ? product.wideScreen : ''}`}
                                 onChange={handleChange}
                                 label={'Widescreen (inch) *'}
                                 type={'text'}
-                                error={error.widescreen} color="error"
+                                error={error.wideScreen} color="error"
                             />
-                            {error.widescreen && <FormControl error variant="standard">
-                                <FormHelperText id="component-error-text">{messageError.widescreen}</FormHelperText>
+                            {error.wideScreen && <FormControl error variant="standard">
+                                <FormHelperText id="component-error-text">{messageError.wideScreen}</FormHelperText>
                             </FormControl>}
 
                         </div>
@@ -482,10 +450,10 @@ const CreateProduct = () => {
                                 onChange={handleChange}
                                 label={'Weight (KG) *'}
                                 type={'text'}
-                                error={error.widescreen} color="error"
+                                error={error.weight} color="error"
                             />
-                            {error.widescreen && <FormControl error variant="standard">
-                                <FormHelperText id="component-error-text">{messageError.widescreen}</FormHelperText>
+                            {error.weight && <FormControl error variant="standard">
+                                <FormHelperText id="component-error-text">{messageError.weight}</FormHelperText>
                             </FormControl>}
 
                         </div>
