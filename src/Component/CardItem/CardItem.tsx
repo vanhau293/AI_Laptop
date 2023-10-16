@@ -7,8 +7,7 @@ const Card = (props: any) => {
     // const navigate = useNavigate();
     return (
         <div className="card-item" title={props.item.laptopName}>
-            <img src={props.item.image ? props.item.image : require('../../image/frame2.png')} className="card__img"/>
-            {/* <img src={`http://localhost:8081/api/phone/image/load/${props.item.img}`} className="card__img" /> */}
+            <img src={props.item.image ? `http://localhost:8080/image/${props.item.image}` : require('../../image/frame2.png')} className="card__img"/>
             <div className="card__body">
                 <div className="card__title" >
                     <span /*</div></div>onClick={() => { navigate(`/product/${props.item.tag}`) }*/>{props.item.laptopName}</span>

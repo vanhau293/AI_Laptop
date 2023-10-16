@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, Button, FormControl, Input, InputLabel, MenuItem, OutlinedInput, Select, Table, TextField } from '@mui/material';
 import { Add, Filter, FilterAlt, Label, RestartAlt } from '@mui/icons-material';
 import { AnyNsRecord } from 'dns';
+import Paging from './paging';
 
 const ProductScreen = (props: any) => {
     const option = [
@@ -18,6 +19,10 @@ const ProductScreen = (props: any) => {
     const [filter, setFilter] = useState('');
     const [demand, setDemand] = useState('');
     const [loading, setLoading] = useState(true);
+    const [numPage, setNumPage] = useState(0);
+    const rowPerPage = 10;
+    const [page, setPage] = useState(1);
+    const [labelId, setLabelId] = useState();
     useEffect(() => {
         if (loading) {
             Axios.get('laptop')
@@ -36,6 +41,7 @@ const ProductScreen = (props: any) => {
                         })
                     );
                     setLoading(false);
+                    setNumPage(Math.ceil(listProduct.length / rowPerPage)); // get number of page
                 })
                 .catch((error) => {
                     console.log(error);
@@ -63,6 +69,7 @@ const ProductScreen = (props: any) => {
                         };
                     })
                 );
+                setNumPage(Math.ceil(listProduct.length / rowPerPage));
             }).catch(e => {
                 console.log(e);
             })
@@ -92,15 +99,47 @@ const ProductScreen = (props: any) => {
                         };
                     })
                 );
+                setNumPage(Math.ceil(listProduct.length / rowPerPage)); // get number of page
             }).catch(e => {
                 console.log(e);
             })
         }
 
     }
+    const handleChange = (event: any, newDemand: any) => {
+        console.log(newDemand.target.value)
+        setLabelId(newDemand.target.value)
+        if (newDemand.target.value === "") {
+            setLoading(true);
+        } else {
+            console.log(demand)
+            Axios.get(`laptop`, {
+                params: {
+                    label: newDemand.target.value
+                }
+            }).then(res => {
+                const listProduct = res.data;
+                setProducts(
+                    listProduct.map((p: any) => {
+                        return {
+                            laptopId: p.laptopId,
+                            image: p.image,
+                            laptopName: p.laptopName,
+                            price: p.price,
+                            labelName: p.label.labelName,
+                            rating: p.rating
+                        };
+                    })
+                );
+                setNumPage(Math.ceil(listProduct.length / rowPerPage)); // get number of page
+            }).catch(e => {
+                console.log(e);
+            })
+        }
+    }
     const handleClickReset = () => {
         setLoading(true);
-        setFilter("");
+        window.location.reload()
     }
     const handleClickAdd = () => {
         navigate("/create");
@@ -150,11 +189,16 @@ const ProductScreen = (props: any) => {
                         <ToggleButtonGroup style={{width: 500, marginLeft: 100, marginTop: 20, height: 30}}
                             name='ddd'
                             type='radio'
+                            value={labelId}
+                            onChange={handleChange}
                             >
-                            <ToggleButton variant = 'outlined' color='error' id='1' value="web">Gamming</ToggleButton>
-                            <ToggleButton variant = 'outlined' color='error' id='2' value="android">Học tập, văn phòng</ToggleButton>
-                            <ToggleButton variant = 'outlined' color='error' id='3' value="ios">Kỹ thuật, đồ họa</ToggleButton>
+                            <ToggleButton variant = 'outlined' color='error' id='1' value='0' >Gamming</ToggleButton>
+                            <ToggleButton variant = 'outlined' color='error' id='2' value="1">Học tập, văn phòng</ToggleButton>
+                            <ToggleButton variant = 'outlined' color='error' id='3' value="2">Kỹ thuật, đồ họa</ToggleButton>
                         </ToggleButtonGroup>
+                        <FormControl sx={{ m: 1, width: 50 ,marginLeft: 7, marginTop: 3}}>
+                            <Button onClick={handleClickReset} variant='outlined' color='error' sx={{ height: '30px', width:'50px' }}><RestartAlt/></Button>
+                        </FormControl>
                     </div>
                     <div className="right">
                         <FormControl sx={{ m: 1, width: 50 }}>
@@ -166,12 +210,16 @@ const ProductScreen = (props: any) => {
                     <h4 className='float-start'></h4>
                 </div>
                 <div className="wrapper-item">
-                    {products.map((item: any) => (
+                    {(products.slice((page - 1) * rowPerPage, page * rowPerPage) || []).map((item: any) => (
                         <CardItem
                             item={item}
                         />
                     ))}
                 </div>
+                <div className='container clearfix'>
+                    <h4 className='float-start'></h4>
+                </div>
+                <Paging numPage={numPage} setPage={setPage} page={page} />
             </Container>
         </Container >
     );

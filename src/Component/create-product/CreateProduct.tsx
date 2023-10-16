@@ -69,7 +69,7 @@ const CreateProduct = () => {
             if (reader.readyState === 2) {
                 setImg(URL.createObjectURL(e.target.files[0]));
                 console.log(e.target.files[0]);
-                setProduct({ ...product, binary_image: reader.result, image: Date.now() + e.target.files[0].name });
+                setProduct({ ...product, binaryImage: reader.result, image: Date.now() + e.target.files[0].name });
                 // setTest({ image_byte: reader.result, image_name: e.target.files[0].name });
             }
         }
@@ -180,13 +180,13 @@ const CreateProduct = () => {
             error1.price = false;
         }
 
-        // if (product.image === undefined || product.image === null || product.image === '') {
-        //     errorMessage.image = 'Image is require';
-        //     error1.image = true;
-        //     flag = true;
-        // } else {
-        //     error1.image = false;
-        // }
+        if (product.image === undefined || product.image === null || product.image === '') {
+            errorMessage.image = 'Image is require';
+            error1.image = true;
+            flag = true;
+        } else {
+            error1.image = false;
+        }
 
         setMessageError(errorMessage);
         setError(error1);
