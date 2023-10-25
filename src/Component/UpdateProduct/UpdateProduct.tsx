@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import './CreateProduct.css'
+import '../create-product/CreateProduct.css'
 import {
     TextField
     , Autocomplete
@@ -12,7 +12,7 @@ import Axios from "../../Axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 
-const CreateProduct = () => {
+const UpdateProduct = () => {
     const initialMessageError = {
         name: '',
         ram: '',
@@ -44,22 +44,25 @@ const CreateProduct = () => {
     }, {
         value: "1", label: 'Bộ dữ liệu chính'
     }]
+
+    let { laptopId } = useParams();
     const navigate = useNavigate();
     const [error, setError] = useState(initialError);
-    const [product, setProduct] = useState<any>('')
+    const [updatedProduct, setUpdatedProduct] = useState<any>('')
     const [lstCpu, setLstCpu] = useState([] as any);
     const [lstGpu, setLstGpu] = useState([] as any);
     const [brands, setBrands] = useState([] as any)
     const [messageError, setMessageError] = useState(initialMessageError);
     const [img, setImg] = useState<any | null>('');
     const [submit, setSubmit] = useState(false);
+    const [product, setProduct]= useState<any>('')
     const handleImage = (e: any) => {
         const reader = new FileReader();
         reader.onload = () => {
             if (reader.readyState === 2) {
                 setImg(URL.createObjectURL(e.target.files[0]));
                 console.log(e.target.files[0]);
-                setProduct({ ...product, binaryImage: reader.result, image: Date.now() + e.target.files[0].name });
+                setUpdatedProduct({ ...updatedProduct, binaryImage: reader.result, image: Date.now() + e.target.files[0].name });
                 // setTest({ image_byte: reader.result, image_name: e.target.files[0].name });
             }
         }
@@ -72,7 +75,7 @@ const CreateProduct = () => {
         let flag = false;
         let errorMessage = {} as any;
         let error1 = initialError;
-        if (product.laptopName === null || product.laptopName === undefined || product.laptopName === '') {
+        if (updatedProduct.laptopName === null || updatedProduct.laptopName === undefined || updatedProduct.laptopName === '') {
             errorMessage.name = 'Tên không được trống';
             error1.name = true;
             flag = true;
@@ -80,21 +83,21 @@ const CreateProduct = () => {
             error1.name = false;
         }
 
-        if (product?.brandId === undefined || product?.brandId === null) {
+        if (updatedProduct?.brandId === undefined || updatedProduct?.brandId === null) {
             errorMessage.brand = 'Thương hiệu không được trống';
             error1.brand = true;
             flag = true;
         } else {
             error1.brand = false;
         }
-        if (product?.cpuId === undefined || product?.cpuId === null) {
+        if (updatedProduct?.cpuId === undefined || updatedProduct?.cpuId === null) {
             errorMessage.cpu = 'CPU không được trống';
             error1.cpu = true;
             flag = true;
         } else {
             error1.cpu = false;
         }
-        if (product?.gpuId === undefined || product?.gpuId === null) {
+        if (updatedProduct?.gpuId === undefined || updatedProduct?.gpuId === null) {
             errorMessage.gpu = 'GPU không được trống';
             error1.gpu = true;
             flag = true;
@@ -102,15 +105,15 @@ const CreateProduct = () => {
             error1.cpu = false;
         }
 
-        if (product.ram === undefined || product.ram === null || product.ram === '') {
+        if (updatedProduct.ram === undefined || updatedProduct.ram === null || updatedProduct.ram === '') {
             errorMessage.ram = 'Ram không được trống';
             error1.ram = true;
             flag = true;
-        } else if (product.ram > 32) {
+        } else if (updatedProduct.ram > 32) {
             errorMessage.ram = 'Ram phải nhỏ hơn hoặc bằng 32';
             error1.ram = true;
             flag = true;
-        } else if (product.ram <= 0) {
+        } else if (updatedProduct.ram <= 0) {
             errorMessage.ram = 'Ram phải lớn hơn 0';
             error1.ram = true;
             flag = true;
@@ -118,15 +121,15 @@ const CreateProduct = () => {
         else {
             error1.ram = false;
         }
-        if (product.hardDrive === undefined || product.hardDrive === null || product.hardDrive === '') {
+        if (updatedProduct.hardDrive === undefined || updatedProduct.hardDrive === null || updatedProduct.hardDrive === '') {
             errorMessage.hardDrive = 'Dung lượng ổ cứng không được trống';
             error1.hardDrive = true;
             flag = true;
-        } else if (product.hardDrive > 2048) {
+        } else if (updatedProduct.hardDrive > 2048) {
             errorMessage.hardDrive = 'Dung lượng ổ cứng phải nhỏ hơn hoặc bằng 2048';
             error1.hardDrive = true;
             flag = true;
-        } else if (product.hardDrive <= 0) {
+        } else if (updatedProduct.hardDrive <= 0) {
             errorMessage.hardDrive = 'Dung lượng ổ cứng phải lớn hơn 0';
             error1.hardDrive = true;
             flag = true;
@@ -134,31 +137,31 @@ const CreateProduct = () => {
             error1.hardDrive = false;
         }
 
-        if (product.wideScreen === undefined || product.wideScreen === null || product.wideScreen === '') {
+        if (updatedProduct.wideScreen === undefined || updatedProduct.wideScreen === null || updatedProduct.wideScreen === '') {
             errorMessage.wideScreen = 'Độ rộng màn hình không được trống';
             error1.wideScreen = true;
             flag = true;
-        } else if (product.wideScreen > 17.3) {
+        } else if (updatedProduct.wideScreen > 17.3) {
             errorMessage.wideScreen = 'Độ rộng màn hình phải nhỏ hơn hoặc bằng 17.3';
             error1.wideScreen = true;
             flag = true;
-        } else if (product.wideScreen <= 0) {
+        } else if (updatedProduct.wideScreen <= 0) {
             errorMessage.wideScreen = 'Độ rộng màn hình phải lớn hơn 0';
             error1.wideScreen = true;
             flag = true;
         } else {
             error1.wideScreen = false;
         }
-        if (product.weight === undefined || product.weight === null || product.weight === '') {
+        if (updatedProduct.weight === undefined || updatedProduct.weight === null || updatedProduct.weight === '') {
             errorMessage.weight = 'Cân nặng không được trống';
             error1.weight = true;
             flag = true;
-        } else if (product.weight <= 0) {
-            errorMessage.weight = 'Cân nặng phải lớn hơn 0';
+        } else if (updatedProduct.weight > 3.2) {
+            errorMessage.weight = 'Cân nặng phải nhỏ hơn hoặc bằng 3.2';
             error1.weight = true;
             flag = true;
-        } else if (product.weight > 3.2) {
-            errorMessage.weight = 'Cân nặng phải nhỏ hơn hoặc bằng 3.2';
+        } else if (updatedProduct.weight <= 0) {
+            errorMessage.weight = 'Cân nặng phải lớn hơn 0';
             error1.weight = true;
             flag = true;
         } else {
@@ -166,15 +169,15 @@ const CreateProduct = () => {
         }
 
         
-        if (product.price === undefined || product.price === 0 || product.price === null || product.price === '') {
+        if (updatedProduct.price === undefined || updatedProduct.price === 0 || updatedProduct.price === null || updatedProduct.price === '') {
             errorMessage.price = 'Giá sản phẩm không được trống';
             error1.price = true;
             flag = true;
-        } else if (product.price < 0) {
+        } else if (updatedProduct.price < 0) {
             errorMessage.price = 'Giá sản phẩm phải lớn hơn 0';
             error1.price = true;
             flag = true;
-        } else if (product.price > 129990001) {
+        } else if (updatedProduct.price > 129990001) {
             errorMessage.price = 'Giá sản phẩm phải nhỏ hơn hoặc bằng 129990001';
             error1.price = true;
             flag = true;
@@ -182,28 +185,28 @@ const CreateProduct = () => {
             error1.price = false;
         }
 
-        if (product.image === undefined || product.image === null || product.image === '') {
+        if (updatedProduct.image === undefined || updatedProduct.image === null || updatedProduct.image === '') {
             errorMessage.image = 'Hình ảnh không được trống';
             error1.image = true;
             flag = true;
         } else {
             error1.image = false;
         }
-        if (product.data === undefined || product.data === null || product.data === '') {
+
+        if (updatedProduct.data === undefined || updatedProduct.data === null || updatedProduct.data === '') {
             errorMessage.data = 'Bộ dữ liệu huấn luyện không được trống';
             error1.data = true;
             flag = true;
         } else {
             error1.data = false;
         }
-
         setMessageError(errorMessage);
         setError(error1);
         return flag;
     }
-    const postCreateProduct = () => {
-        console.log(product)
-        Axios.post("laptop", product)
+    const postUpdateProduct = () => {
+        console.log(updatedProduct)
+        Axios.put("laptop/"+laptopId, updatedProduct)
             .then((res) => {
                 alert(res.data);
                 navigate(-1);
@@ -215,7 +218,7 @@ const CreateProduct = () => {
     useEffect(() => {
         console.log(messageError);
         if (Object.keys(messageError).length === 0 && submit) {
-            postCreateProduct();
+            postUpdateProduct();
         }
     }, [messageError])
 
@@ -223,7 +226,33 @@ const CreateProduct = () => {
         valid();
         setSubmit(true);
     }
+    useEffect(() => {
+        Axios.get(`laptop/`+ laptopId)
+            .then(res => {
+                setProduct(res.data);
+                console.log(res.data);
+                setUpdatedProduct({
+                    ...updatedProduct,
+                    laptopName: res.data.laptopName,
+                    brandName: res.data.brand.brandName,
+                    brandId: res.data.brand.brandId,
+                    cpuName: res.data.cpu.cpuName,
+                    cpuId: res.data.cpu.cpuId,
+                    gpuName: res.data.gpu.gpuName,
+                    gpuId: res.data.gpu.gpuId,
+                    ram: res.data.ram,
+                    hardDrive: res.data.hardDrive,
+                    price: res.data.price,
+                    weight: res.data.weight,
+                    wideScreen: res.data.wideScreen,
+                    image: res.data.image
+                })
 
+            }).catch((error) => {
+                console.log(error);
+
+            })
+    }, [])
     useEffect(() => {
         Axios.get(`cpu`)
             .then(res => {
@@ -247,16 +276,16 @@ const CreateProduct = () => {
         Axios.get(`gpu`)
             .then(res => {
                 setLstGpu(res.data);
-                console.log(res.data);
             }).catch((error) => {
                 console.log(error);
             })
     }, [])
+    
     const filterCpu = () => {
 
-        if (product.cpu !== null && product.cpu !== undefined) {
+        if (updatedProduct.cpu !== null && updatedProduct.cpu !== undefined) {
             for (var i in lstCpu) {
-                if (product.cpu.id === lstCpu[i].id) {
+                if (updatedProduct.cpu.id === lstCpu[i].id) {
                     return lstCpu[i];
                 }
             }
@@ -265,9 +294,9 @@ const CreateProduct = () => {
     }
     const filterGpu = () => {
 
-        if (product.gpu !== null && product.gpu !== undefined) {
+        if (updatedProduct.gpu !== null && updatedProduct.gpu !== undefined) {
             for (var i in lstGpu) {
-                if (product.gpu.id === lstGpu[i].id) {
+                if (updatedProduct.gpu.id === lstGpu[i].id) {
                     return lstGpu[i];
                 }
             }
@@ -275,9 +304,9 @@ const CreateProduct = () => {
         return null;
     }
     const filterBrand = () => {
-        if (product.brand !== null && product.brand !== undefined) {
+        if (updatedProduct.brand !== null && updatedProduct.brand !== undefined) {
             for (var i in brands) {
-                if (product.brand.id === brands[i].id) {
+                if (updatedProduct.brand.id === brands[i].id) {
                     return brands[i];
                 }
             }
@@ -288,10 +317,10 @@ const CreateProduct = () => {
         const name = e.target.name;
         const value = e.target.value;
         if (name === 'laptopName') {
-            setProduct({ ...product, [name]: value });
+            setUpdatedProduct({ ...updatedProduct, [name]: value });
         } else {
             if (!isNaN(value)) {
-                setProduct({ ...product, [name]: value });
+                setUpdatedProduct({ ...updatedProduct, [name]: value });
             }
         }
     }
@@ -300,7 +329,7 @@ const CreateProduct = () => {
             <div className="updateClothesContainer">
                 <div className="header">
                     <h4  color="error">
-                        {'Thêm mới laptop'}
+                        {'Cập nhật laptop'}
                     </h4>
                     <hr />
                 </div>
@@ -310,7 +339,7 @@ const CreateProduct = () => {
                             <TextField sx={{ width: '100%' }}
                                 onChange={handleChange}
                                 error={error.name}
-                                value={`${product.laptopName ? product.laptopName : ''}`}
+                                value={`${updatedProduct.laptopName ? updatedProduct.laptopName : ''}`}
                                 label={'Nhập tên sản phẩm *'}
                                 name="laptopName"  color="error"/>
                             {
@@ -329,8 +358,9 @@ const CreateProduct = () => {
                                 //value={filterBrand()}
                                 getOptionLabel={(option) => option.brandName}
                                 onChange={(event: any, newInputValue: any) => {
-                                    setProduct({ ...product, brandId: newInputValue.brandId+'' });
+                                    setUpdatedProduct({ ...updatedProduct, brandId: newInputValue.brandId+'' });
                                 }}
+                                defaultValue={updatedProduct.brandName}
                                 sx={{ width: '100%' }}
                                 renderInput={(params) => <TextField
                                     {...params}
@@ -349,13 +379,15 @@ const CreateProduct = () => {
                                 //value={filterCpu()}
                                 getOptionLabel={(option) => option.cpuName}
                                 onChange={(event: any, newInputValue: any) => {
-                                    setProduct({ ...product, cpuId: newInputValue.cpuId+'' });
+                                    setUpdatedProduct({ ...updatedProduct, cpuId: newInputValue.cpuId+'' });
                                 }}
+                                defaultValue={product.cpu}
+                                autoSelect = {true}
                                 sx={{ width: '100%' }}
                                 renderInput={(params) => <TextField
                                     {...params}
                                     error={error.cpu}
-                                    label="Chọn CPU *"  color="error"/>}
+                                    label="Chọn CPU *"  defaultValue = {updatedProduct.cpuName}  color="error"/>}
                             />
                             {error.cpu && <FormControl error variant="standard">
                                 <FormHelperText id="component-error-text">{messageError.cpu}</FormHelperText>
@@ -369,8 +401,9 @@ const CreateProduct = () => {
                                 //value={filterGpu()}
                                 getOptionLabel={(option) => option.gpuName}
                                 onChange={(event: any, newInputValue: any) => {
-                                    setProduct({ ...product, gpuId: newInputValue.gpuId+'' });
+                                    setUpdatedProduct({ ...updatedProduct, gpuId: newInputValue.gpuId+'' });
                                 }}
+                                defaultValue={updatedProduct.gpuName}
                                 sx={{ width: '100%' }}
                                 renderInput={(params) => <TextField
                                     {...params}
@@ -387,7 +420,7 @@ const CreateProduct = () => {
                                     <td style={{ width: "50%" }}>
                                         <TextField
                                             name="ram"
-                                            value={`${product.ram ? product.ram : ''}`}
+                                            value={`${updatedProduct.ram ? updatedProduct.ram : ''}`}
                                             onChange={handleChange}
                                             label={'Nhập RAM (GB) *'}
                                             type={'text'}
@@ -400,7 +433,7 @@ const CreateProduct = () => {
                                     <td style={{ textAlign: 'right', width: "50%" }}>
                                         <TextField
                                             name="hardDrive"
-                                            value={`${product.hardDrive ? product.hardDrive : ''}`}
+                                            value={`${updatedProduct.hardDrive ? updatedProduct.hardDrive : ''}`}
                                             onChange={handleChange}
                                             label={'Nhập ổ cứng (GB) *'}
                                             type={'text'}
@@ -416,7 +449,7 @@ const CreateProduct = () => {
                         <div className="container-input">
                             <TextField
                                 name="wideScreen"
-                                value={`${product.wideScreen ? product.wideScreen : ''}`}
+                                value={`${updatedProduct.wideScreen ? updatedProduct.wideScreen : ''}`}
                                 onChange={handleChange}
                                 label={'Nhập độ rộng màn hình (inch) *'}
                                 type={'text'}
@@ -430,7 +463,7 @@ const CreateProduct = () => {
                         <div className="container-input">
                             <TextField
                                 name="weight"
-                                value={`${product.weight ? product.weight : ''}`}
+                                value={`${updatedProduct.weight ? updatedProduct.weight : ''}`}
                                 onChange={handleChange}
                                 label={'Nhập cân nặng (KG) *'}
                                 type={'text'}
@@ -444,7 +477,7 @@ const CreateProduct = () => {
                         <div className="container-input">
                             <TextField
                                 name="price"
-                                value={`${product.price ? product.price : ""}`}
+                                value={`${updatedProduct.price ? updatedProduct.price : ""}`}
                                 onChange={handleChange}
                                 label={'Nhập giá sản phẩm (VND)*'}
                                 type={'text'}
@@ -455,6 +488,7 @@ const CreateProduct = () => {
                             </FormControl>}
 
                         </div>
+
                         <div className="container-input">
                             <Autocomplete
                                 disablePortal
@@ -463,7 +497,7 @@ const CreateProduct = () => {
                                 //value={filterCpu()}
                                 getOptionLabel={(option) => option.label}
                                 onChange={(event: any, newInputValue: any) => {
-                                    setProduct({ ...product, data: newInputValue.value });
+                                    setUpdatedProduct({ ...updatedProduct, data: newInputValue.value });
                                 }}
                                 sx={{ width: '100%' }}
                                 renderInput={(params) => <TextField
@@ -479,7 +513,7 @@ const CreateProduct = () => {
                     <div className="right">
                         <div className="imageContainer">
                             <div className="image">
-                                {<img style={{ borderColor: `${error.image ? 'red' : "black"}` }} src={img ? img : require('../../image/frame2.png')} />}
+                                {<img style={{ borderColor: `${error.image ? 'red' : "black"}` }} src={updatedProduct.image ? `http://localhost:8080/image/${updatedProduct.image}` : require('../../image/frame2.png')} />}
                             </div>
                             {error.image && <FormControl error variant="standard">
                                 <FormHelperText id="component-error-text">{messageError.image}</FormHelperText>
@@ -500,11 +534,11 @@ const CreateProduct = () => {
                 <div className="btnContainer">
                     <Button sx={{ width: '150px' }} variant="outlined" color="error" onClick={handleCancel}>Hủy</Button>
                     &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Button sx={{ width: '200px' }} variant="contained" color="error" onClick={handleCreate}>Thêm</Button>
+                    <Button sx={{ width: '200px' }} variant="contained" color="error" onClick={handleCreate}>Cập nhật</Button>
                 </div>
             </div>
         </div>
     )
 }
 
-export default CreateProduct;
+export default UpdateProduct;

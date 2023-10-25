@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import CardItem from '../CardItem/CardItem';
 import Axios from '../../Axios';
 import './ScreenCard.css';
 import { Link, useNavigate } from 'react-router-dom';
-import { Avatar, Button, FormControl, Input, InputLabel, MenuItem, OutlinedInput, Select, Table, TextField } from '@mui/material';
-import { Add, Filter, FilterAlt, Label, RestartAlt } from '@mui/icons-material';
-import { AnyNsRecord } from 'dns';
+import {  Autocomplete, Button, FormControl, TextField } from '@mui/material';
+import { RestartAlt } from '@mui/icons-material';
 import Paging from './paging';
 
 const ProductScreen = (props: any) => {
@@ -23,6 +22,12 @@ const ProductScreen = (props: any) => {
     const rowPerPage = 10;
     const [page, setPage] = useState(1);
     const [labelId, setLabelId] = useState();
+    const [brandId, setBrandId] = useState();
+    const [brand, setBrand] = useState({
+        brandId: '',
+        brandName: ''
+    });
+    const [brands, setBrands] = useState([] as any)
     useEffect(() => {
         if (loading) {
             Axios.get('laptop')
@@ -48,6 +53,14 @@ const ProductScreen = (props: any) => {
                 });
         }
     }, [loading]);
+    useEffect(() => {
+        Axios.get(`brand`)
+            .then(res => {
+                setBrands(res.data);
+            }).catch((error) => {
+                console.log(error);
+            })
+    }, [])
     const handleClickFilter = () => {
         if (filter === "") {
             setLoading(true);
@@ -107,6 +120,7 @@ const ProductScreen = (props: any) => {
 
     }
     const handleChange = (event: any, newDemand: any) => {
+        
         console.log(newDemand.target.value)
         setLabelId(newDemand.target.value)
         if (newDemand.target.value === "") {
@@ -132,6 +146,7 @@ const ProductScreen = (props: any) => {
                     })
                 );
                 setNumPage(Math.ceil(listProduct.length / rowPerPage)); // get number of page
+                setPage(1)
             }).catch(e => {
                 console.log(e);
             })
@@ -144,65 +159,44 @@ const ProductScreen = (props: any) => {
     const handleClickAdd = () => {
         navigate("/create");
     }
+    const handleClickUpdate = (laptopId : any) => {
+        navigate(`/update/${laptopId}`);
+      };
     return (
         <Container>
             <Container>
                 <div className='container-header'>
                     <div className="left">
-                        <FormControl sx={{ m: 1, width: 250 }}>
-                            <InputLabel htmlFor="component-outlined" color='error'>Demand</InputLabel>
-                            <OutlinedInput
-                            id="component-outlined"
-                            color='error'
-                            label="Demand"
-                            name='demand'
-                            onChange={(e)=>setDemand(e.target.value)}
+                        <FormControl sx={{ m: 1, width: 200 }}>
+                        <TextField
+                                name=""
+                                value={`${demand ? demand : ''}`}
+                                onChange={(e)=>setDemand(e.target.value)}
+                                label={'Nhập nhu cầu tìm kiếm'}
+                                type={'text'} color="error"
                             />
                         </FormControl>
-                        <FormControl sx={{ m: 1, width: 50 }}>
-                            <Button onClick={handleClickFind} variant='outlined' color='error' sx={{ height: '55px' }}>Find</Button>
+                        <FormControl sx={{ m: 1, width: 100 }}>
+                            <Button onClick={handleClickFind} variant='outlined' color='error' sx={{ height: '55px' }}>Tìm kiếm</Button>
                         </FormControl>
-                        {/* <FormControl sx={{ m: 1, width: 250, marginLeft: 10 }}>
-                            <InputLabel id="demo-select-small">Filter</InputLabel>
-                            <Select
-                                labelId="demo-select-small"
-                                id="demo-select-small"
-                                value={filter}
-                                label="Label"
-                                onChange={(e) => setFilter(e.target.value)}
-                            >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
-                                {option.map(data => <MenuItem value={data.value}>{data.label}</MenuItem>)}
-                            </Select>
-                        </FormControl> */}
-                        {/* <FormControl sx={{ m: 1, width: 50, marginLeft: 20, marginTop: 3}}>
-                            <Button onClick={handleClickFilter} variant='contained' color='error' sx={{ height: '30px', width:'100px' }}>#Gamming</Button>
-                        </FormControl>
-                        <FormControl sx={{ m: 1, width: 50 ,marginLeft: 7, marginTop: 3}}>
-                            <Button onClick={handleClickReset} variant='contained' color='error' sx={{ height: '30px', width:'100px' }}>#VănPhòng</Button>
-                        </FormControl>
-                        <FormControl sx={{ m: 1, width: 50 ,marginLeft: 7, marginTop: 3}}>
-                            <Button onClick={handleClickReset} variant='contained' color='error' sx={{ height: '30px', width:'100px' }}>#KỹThuật</Button>
-                        </FormControl> */}
-                        <ToggleButtonGroup style={{width: 500, marginLeft: 100, marginTop: 20, height: 30}}
+                        
+                        <ToggleButtonGroup style={{width: 500, marginLeft: 50, marginTop: 20, height: 30}}
                             name='ddd'
                             type='radio'
                             value={labelId}
                             onChange={handleChange}
                             >
-                            <ToggleButton variant = 'outlined' color='error' id='1' value='0' >Gamming</ToggleButton>
+                            <ToggleButton variant = 'outlined' color='error' id='1' value='0'>Gamming</ToggleButton>
                             <ToggleButton variant = 'outlined' color='error' id='2' value="1">Học tập, văn phòng</ToggleButton>
                             <ToggleButton variant = 'outlined' color='error' id='3' value="2">Kỹ thuật, đồ họa</ToggleButton>
                         </ToggleButtonGroup>
-                        <FormControl sx={{ m: 1, width: 50 ,marginLeft: 7, marginTop: 3}}>
+                        <FormControl sx={{ m: 1, width: 50 ,marginLeft: 0, marginTop: 3}}>
                             <Button onClick={handleClickReset} variant='outlined' color='error' sx={{ height: '30px', width:'50px' }}><RestartAlt/></Button>
                         </FormControl>
                     </div>
                     <div className="right">
                         <FormControl sx={{ m: 1, width: 50 }}>
-                            <Button onClick={handleClickAdd} variant='contained' color='error' sx={{ height: '55px', width:'200px' }}>Add new laptop</Button>
+                            <Button onClick={handleClickAdd} variant='contained' color='error' sx={{ height: '55px', width:'200px' }}>Thêm mới</Button>
                         </FormControl>
                     </div>
                 </div>
@@ -213,6 +207,7 @@ const ProductScreen = (props: any) => {
                     {(products.slice((page - 1) * rowPerPage, page * rowPerPage) || []).map((item: any) => (
                         <CardItem
                             item={item}
+                            onClick={() => handleClickUpdate(item.laptopId)}
                         />
                     ))}
                 </div>

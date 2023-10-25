@@ -1,3 +1,5 @@
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 const Paging = (props) => {
   const handleNext = () => {
     let temp = props.page + 1;
@@ -22,7 +24,7 @@ const Paging = (props) => {
             onClick={handlePre}
             id="btnPre"
           >
-            Previous
+            <ArrowBackIosNewIcon/>
           </button>
           {Array.from({ length: props.numPage }, (_, i) => (
             <button
@@ -44,7 +46,7 @@ const Paging = (props) => {
             className="btn btn-outline-danger"
             onClick={handleNext}
           >
-            Next
+            <ArrowForwardIosIcon/>
           </button>
         </div>
       ) : (
